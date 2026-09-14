@@ -24,7 +24,7 @@ You may use the body of the file as needed and define additional frontmatter fie
 Takr will create new task files for you with the `add` command.
 
 ```shell
-takr add <TITLE> -r <RANK> -t <TAGS>... 
+$ takr add <TITLE> -r <RANK> -t <TAGS>... 
 ```
 
 ### List tasks
@@ -32,12 +32,22 @@ takr add <TITLE> -r <RANK> -t <TAGS>...
 To list existing tasks use the `list` command.
 
 ```shell
-takr list
+$ takr list
+
+<tasks\260914-153710.md>   161   ABC.............................   (a) (b) (c)
+<tasks\260914-153646.md>    90   AB..............................   (a) (b)
+<tasks\260914-153651.md>    80   BC..............................   (b) (c)
+<tasks\260914-153655.md>    70   CA..............................   (a) (c)
+<tasks\260914-153557.md>    20   A...............................   (a)
+<tasks\260914-153601.md>    13   B...............................   (b)
+<tasks\260914-153607.md>    12   C...............................   (c)
+<tasks\260914-154649.md>     0   untagged........................
 ```
 
 You may specify the following flags to filter tasks based on their tags or content. You may specify the flags `-t` and `-T` multiple times.
 
 - `-f` Text filter.
+- `-a` Include closed tasks.
 - `-u` Exclude tagged.
 - `-U` Exclude untagged.
 - `-t <TAG>...` Include tasks with specified tags.
