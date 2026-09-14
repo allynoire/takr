@@ -12,7 +12,7 @@ rank: 100
 tags: [ coffee, groceries ]
 # whatever other properties you need...
 ---
-# whatever you wanna write here
+# whatever you want to put here :)
 ```
 
 You may use the body of the file as needed and define additional frontmatter fields if required.
@@ -21,7 +21,7 @@ You may use the body of the file as needed and define additional frontmatter fie
 
 ### Add task
 
-Takr will create a new task files for you with the `add` command.
+Takr will create new task files for you with the `add` command.
 
 ```shell
 takr add <TITLE> -r <RANK> -t <TAGS>... 
@@ -35,7 +35,15 @@ To list existing tasks use the `list` command.
 takr list
 ```
 
-You may specify the following flags to filter tasks based on their tags or content.
+You may specify the following flags to filter tasks based on their tags or content. You may specify the flags `-t` and `-T` multiple times.
+
+- `-f` Text filter.
+- `-u` Exclude tagged.
+- `-U` Exclude untagged.
+- `-t <TAG>...` Include tasks with specified tags.
+- `-T <TAG>...` Exclude tasks with specified tags.
+
+#### Query Examples
 
 | Query         | Lists tasks that                             |
 | ------------- | -------------------------------------------- |
