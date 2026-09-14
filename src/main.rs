@@ -317,7 +317,7 @@ fn list_todo(todo: &Todo) {
         // styling::Reset.render(),
         todo.rank,
         todo.title.as_str(),
-        tags.join(", ")
+        tags.join(" ")
     )
 }
 
