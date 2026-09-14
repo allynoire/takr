@@ -2,8 +2,10 @@ use std::fmt::Debug;
 use std::io::Write;
 use std::fmt::Write as OtherWrite;
 use std::path::{Path, PathBuf};
+use std::str::Lines;
 
 use chrono::Local;
+use chrono::format::Item;
 use clap::builder::styling::{self};
 use clap::{ArgAction, Parser, Subcommand};
 
@@ -239,7 +241,7 @@ fn patch_todo(todo: &Todo) {
     let patched_frontmatter = frontmatter.lines()
         .map(|line| {
             if let Some((key, _)) = line.split_once(':') {
-                match key.trim() {
+                match key.trim_end() {
                     "rank" => {
                         format!("rank: {}", todo.rank)
                     }
@@ -297,9 +299,10 @@ fn get_todos() -> Vec<Todo> {
     let mut todos = Vec::new();
 
     if std::fs::exists("tasks").unwrap() {
+
         for entry in std::fs::read_dir("tasks").unwrap() {
             let path = entry.unwrap().path();
-            if path.is_file() {
+            if path.is_file() && path.extension().is_some_and(|it| it == "md") {
                 if let Some(todo) = get_todo(&path) {
                     todos.push(todo)
                 }
@@ -346,8 +349,12 @@ fn generate_todo_id() -> String {
 }
 
 fn split_frontmatter(s: &str) -> Option<(&str, &str)> {
-    const DELIM: &str = "---\n";
-    s.strip_prefix(DELIM)?.split_once(DELIM)
+    s.strip_prefix("---\n")
+        .or(s.strip_prefix("---\r\n"))
+        .or(s.strip_prefix("---\r"))?
+    .split_once("\n---\n")
+    .or_else(|| s.split_once("\r\n---\r\n"))
+    .or_else(|| s.split_once("\r---\r"))
 }
 
 fn parse_todo(s: &str) -> Option<Todo> {
@@ -362,8 +369,8 @@ fn parse_todo(s: &str) -> Option<Todo> {
     let (frontmatter, _) = split_frontmatter(s)?;
 
     for line in frontmatter.lines() {
-        if let Some((key, value)) = line.trim().split_once(':') {
-            match key.trim() {
+        if let Some((key, value)) = line.split_once(':') {
+            match key.trim_end() {
                 "rank" => {
                     rank.replace(u32::from_str_radix(value.trim(), 10).ok()?);
                 }
