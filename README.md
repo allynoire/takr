@@ -24,7 +24,7 @@ You may use the body of the file as needed and define additional frontmatter fie
 Takr will create new task files for you with the `add` command.
 
 ```shell
-$ takr add <TITLE> -r <RANK> -t <TAGS>... 
+takr add <TITLE> -r <RANK> -t <TAGS>... 
 ```
 
 ### List tasks
