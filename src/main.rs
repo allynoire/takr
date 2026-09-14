@@ -320,19 +320,22 @@ fn list_todo(todo: &Todo) {
         .collect::<Vec<String>>();
     tags.sort();
 
+    if todo.status == TodoStatus::Done {
+        print!("{}", styling::AnsiColor::Green.render_fg());
+    }
+
     println!(
-        "{}<{}>   {:>3}   {:.<32}   {}",
-        
-        match todo.status {
-            TodoStatus::Done => styling::AnsiColor::Green,
-            TodoStatus::Open => styling::AnsiColor::Black
-        }.render_fg(),
+        "<{}>   {:>3}   {:.<32}   {}",
         todo.path_name(),
         // styling::Reset.render(),
         todo.rank,
         todo.title.as_str(),
         tags.join(" ")
-    )
+    );
+
+    if todo.status == TodoStatus::Done {
+        print!("{}", styling::Reset.render());
+    }
 }
 
 fn generate_todo_id() -> String {
