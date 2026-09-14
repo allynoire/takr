@@ -110,34 +110,48 @@ struct Cli {
 
 #[derive(Subcommand, Debug)]
 enum CliAction {
+    /// Create a new task
     Add {
+        /// The title of the task
         title: String,
 
+        /// Tags associated with the task
         #[arg(short, long, action=ArgAction::Append, num_args=1..)]
         tags: Vec<String>,
 
+        /// A rank by witch the task is ordered
         #[arg(short, long)]
         rank: Option<u32>
     },
+
+    /// Close an existing task
     Close {
         path: String
     },
+
+    /// List existing tasks
     List {
+        /// Filter tasks that contain the substring in their title
         #[arg(short, long)]
         filter: Option<String>,
 
-        #[arg(short='a')]
+        /// Include closed tasks
+        #[arg(short='a', long="all")]
         list_all: bool,
 
+        /// Exclude tasks that have no tags
         #[arg(short='u', long)]
         exclude_tagged: bool,
 
+        /// Exclude tasks that have tags
         #[arg(short='U', long)]
         exclude_untagged: bool,
 
+        /// Include tasks that contain the specified tags
         #[arg(short='t', long, action=ArgAction::Append, num_args=1..)]
         include_tags: Option<Vec<Vec<String>>>,
         
+        /// Exclude tasks that contain the specified tags
         #[arg(short='T', long, action=ArgAction::Append, num_args=1..)]
         exclude_tags: Option<Vec<Vec<String>>>,
     },
