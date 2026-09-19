@@ -2,10 +2,8 @@ use std::fmt::Debug;
 use std::io::Write;
 use std::fmt::Write as OtherWrite;
 use std::path::{Path, PathBuf};
-use std::str::Lines;
 
 use chrono::Local;
-use chrono::format::Item;
 use clap::builder::styling::{self};
 use clap::{ArgAction, Parser, Subcommand};
 
@@ -81,6 +79,8 @@ fn main() {
                 tags,
                 rank,
                 Some(TodoStatus::Open),
+                0,
+                0
             );
             
             put_todo(&mut todo);
@@ -165,8 +165,11 @@ struct Todo {
     rank: u32,
     title: String,
     status: TodoStatus,
-    tags: Vec<String>
+    tags: Vec<String>,
+    todos_checked: u32,
+    todos_count: u32
 }
+
 
 #[derive(Debug, PartialEq)]
 enum TodoStatus {
@@ -181,6 +184,9 @@ impl Todo {
         tags: Vec<String>,
         rank: Option<u32>,
         status: Option<TodoStatus>,
+        todos_checked: u32,
+        todos_count: u32
+
     ) -> Self {
         const DEFAULT_STATUS: TodoStatus = TodoStatus::Open;
         const DEFAULT_RANK: u32 = 0; 
@@ -189,7 +195,9 @@ impl Todo {
             title,
             tags,
             rank: rank.unwrap_or(DEFAULT_RANK),
-            status: status.unwrap_or(DEFAULT_STATUS)
+            status: status.unwrap_or(DEFAULT_STATUS),
+            todos_checked,
+            todos_count
         }
     }
 
@@ -328,10 +336,14 @@ fn list_todo(todo: &Todo) {
     }
 
     println!(
-        "<{}>   {:>3}   {:.<32}   {}",
+        "<{}>   {:>3}  {:>2}/{:<2}  {:.<32}   {}",
         todo.path_name(),
         // styling::Reset.render(),
         todo.rank,
+        if todo.todos_count == 0 { "-".to_string() }
+        else { todo.todos_checked.to_string() },
+        if todo.todos_count == 0 { "-".to_string() }
+        else { todo.todos_count.to_string() },
         todo.title.as_str(),
         tags.join(" ")
     );
@@ -366,7 +378,7 @@ fn parse_todo(s: &str) -> Option<Todo> {
     let mut rank: Option<u32> = None;
     let mut tags: Vec<String> = Vec::new();
 
-    let (frontmatter, _) = split_frontmatter(s)?;
+    let (frontmatter, body) = split_frontmatter(s)?;
 
     for line in frontmatter.lines() {
         if let Some((key, value)) = line.split_once(':') {
@@ -398,11 +410,28 @@ fn parse_todo(s: &str) -> Option<Todo> {
         }
     }
 
+    let mut todos_unchecked = 0;
+    let mut todos_checked = 0;
+
+    for line in body.lines() {
+
+        let line = line.trim_start();
+        if line.starts_with("- [ ]") {
+            todos_unchecked += 1;
+        }
+        if line.starts_with("- [x]") {
+            todos_checked += 1;
+        }
+    }
+
+
     Some(Todo::new(
         None,
         title?.to_string(),
         tags,
         rank,
-        status
+        status,
+        todos_checked,
+        todos_unchecked + todos_checked,
     ))
 }
