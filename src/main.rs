@@ -335,15 +335,19 @@ fn list_todo(todo: &Todo) {
         print!("{}", styling::AnsiColor::Green.render_fg());
     }
 
+    let subtasks_str = if todo.todos_count == 0 {
+        " - ".to_string()
+    } else {
+        let d = char::from_digit(todo.todos_count - todo.todos_checked, 10);
+        format!("[{}]", d.map_or('+', |d| if d == '0' { 'x' } else { d } ))
+    };
+
     println!(
-        "<{}>   {:>3}  {:>2}/{:<2}  {:.<32}   {}",
+        "<{}>   {:>3}   {}   {:.<32}   {}",
         todo.path_name(),
         // styling::Reset.render(),
         todo.rank,
-        if todo.todos_count == 0 { "-".to_string() }
-        else { todo.todos_checked.to_string() },
-        if todo.todos_count == 0 { "-".to_string() }
-        else { todo.todos_count.to_string() },
+        subtasks_str,
         todo.title.as_str(),
         tags.join(" ")
     );
